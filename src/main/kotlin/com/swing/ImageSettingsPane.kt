@@ -116,13 +116,13 @@ class ImageSettingsPane : JPanel(GridBagLayout()) {
 
         enableImShowBtn.addActionListener {
             if(params.enableImShow) {
-                mqtt.publish("/car/enable-imshow", "0")
+                mqtt.publish("car/enable-imshow", "0")
                 enableImShowBtn.background = Color.RED
                 enableImShowBtn.foreground = Color.WHITE
                 enableImShowBtn.text = "OFF"
                 params.enableImShow = false
             } else {
-                mqtt.publish("/car/enable-imshow", "1")
+                mqtt.publish("car/enable-imshow", "1")
                 enableImShowBtn.background = Color.GREEN
                 enableImShowBtn.foreground = Color.BLACK
                 enableImShowBtn.text = "ON"
@@ -132,17 +132,17 @@ class ImageSettingsPane : JPanel(GridBagLayout()) {
 
         adaptThreshMaxValueSpinner.addChangeListener {
             params.adaptThreshMaxValue = adaptThreshMaxValueSpinner.value as Int
-            mqtt.publish("/car/adaptive-threshold/max-value", params.adaptThreshMaxValue.toString())
+            mqtt.publish("car/adaptive-threshold/max-value", params.adaptThreshMaxValue.toString())
         }
 
         adaptThreshMethodBox.addActionListener {
             params.adaptThreshMethod = adaptThreshMethodBox.selectedItem as String
-            mqtt.publish("/car/adaptive-threshold/method", adaptThreshMethods[params.adaptThreshMethod].toString())
+            mqtt.publish("car/adaptive-threshold/method", adaptThreshMethods[params.adaptThreshMethod].toString())
         }
 
         adaptThreshTypeBox.addActionListener {
             params.adaptThreshType = adaptThreshTypeBox.selectedItem as String
-            mqtt.publish("/car/adaptive-threshold/type", adaptThreshTypes[params.adaptThreshType].toString())
+            mqtt.publish("car/adaptive-threshold/type", adaptThreshTypes[params.adaptThreshType].toString())
         }
 
         adaptThreshBlockSizeSpinner.addChangeListener {
@@ -152,30 +152,30 @@ class ImageSettingsPane : JPanel(GridBagLayout()) {
                 params.adaptThreshBlockSize += 1
                 adaptThreshBlockSizeSpinner.value = params.adaptThreshBlockSize
             }
-            mqtt.publish("/car/adaptive-threshold/block-size", params.adaptThreshBlockSize.toString())
+            mqtt.publish("car/adaptive-threshold/block-size", params.adaptThreshBlockSize.toString())
         }
 
         adaptThreshCSpinner.addChangeListener {
             params.adaptThreshC = adaptThreshCSpinner.value as Int
-            mqtt.publish("/car/adaptive-threshold/C", params.adaptThreshC.toString())
+            mqtt.publish("car/adaptive-threshold/C", params.adaptThreshC.toString())
         }
 
         closingIterationsSpinner.addChangeListener {
             params.closingIterations = closingIterationsSpinner.value as Int
-            mqtt.publish("/car/closing/iterations", params.closingIterations.toString())
+            mqtt.publish("car/closing/iterations", params.closingIterations.toString())
         }
 
         publishAllParams()
     }
 
     private fun publishAllParams() {
-        mqtt.publish("/car/enable-imshow", if (params.enableImShow) "1" else "0")
-        mqtt.publish("/car/adaptive-threshold/max-value", params.adaptThreshMaxValue.toString())
-        mqtt.publish("/car/adaptive-threshold/method", adaptThreshMethods[params.adaptThreshMethod].toString())
-        mqtt.publish("/car/adaptive-threshold/type", adaptThreshTypes[params.adaptThreshType].toString())
-        mqtt.publish("/car/adaptive-threshold/block-size", params.adaptThreshBlockSize.toString())
-        mqtt.publish("/car/adaptive-threshold/C", params.adaptThreshC.toString())
-        mqtt.publish("/car/closing/iterations", params.closingIterations.toString())
+        mqtt.publish("car/enable-imshow", if (params.enableImShow) "1" else "0")
+        mqtt.publish("car/adaptive-threshold/max-value", params.adaptThreshMaxValue.toString())
+        mqtt.publish("car/adaptive-threshold/method", adaptThreshMethods[params.adaptThreshMethod].toString())
+        mqtt.publish("car/adaptive-threshold/type", adaptThreshTypes[params.adaptThreshType].toString())
+        mqtt.publish("car/adaptive-threshold/block-size", params.adaptThreshBlockSize.toString())
+        mqtt.publish("car/adaptive-threshold/C", params.adaptThreshC.toString())
+        mqtt.publish("car/closing/iterations", params.closingIterations.toString())
     }
 
     private fun loadParams() {

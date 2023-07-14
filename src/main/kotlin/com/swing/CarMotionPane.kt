@@ -95,19 +95,19 @@ class CarMotionPane : JPanel(GridBagLayout()) {
 
         speedSpinner.addChangeListener {
             params.currentSpeed = speedSpinner.value as Int
-            mqtt.publish("/car/speed", params.currentSpeed.toString())
+            mqtt.publish("car/speed", params.currentSpeed.toString())
         }
 
         constantSpeedBtn.addActionListener {
             if(params.enableConstantSpeed) {
-                mqtt.publish("/car/enable-const-speed", "0")
+                mqtt.publish("car/enable-const-speed", "0")
                 constantSpeedBtn.background = Color.RED
                 constantSpeedBtn.foreground = Color.WHITE
                 constantSpeedBtn.text = "OFF"
                 params.enableConstantSpeed = false
                 speedSpinner.isEnabled = false
             } else {
-                mqtt.publish("/car/enable-const-speed", "1")
+                mqtt.publish("car/enable-const-speed", "1")
                 constantSpeedBtn.background = Color.GREEN
                 constantSpeedBtn.foreground = Color.BLACK
                 constantSpeedBtn.text = "ON"
@@ -118,13 +118,13 @@ class CarMotionPane : JPanel(GridBagLayout()) {
 
         movementBtn.addActionListener {
             if(params.stop) {
-                mqtt.publish("/car/stop", "0")
+                mqtt.publish("car/stop", "0")
                 movementBtn.background = Color.RED
                 movementBtn.foreground = Color.WHITE
                 movementBtn.text = "STOP"
                 params.stop = false
             } else {
-                mqtt.publish("/car/stop", "1")
+                mqtt.publish("car/stop", "1")
                 movementBtn.background = Color.GREEN
                 movementBtn.foreground = Color.BLACK
                 movementBtn.text = "RUN"
@@ -133,12 +133,20 @@ class CarMotionPane : JPanel(GridBagLayout()) {
         }
 
         publishAllParams()
+
+//        // set hotkey
+//        inputMap.put(KeyStroke.getKeyStroke("F2"), "Click")
+//        actionMap.put("Click", object : AbstractAction() {
+//            override fun actionPerformed(e: ActionEvent?) {
+//                println("LOLOLO")//movementBtn.doClick()
+//            }
+//        })
     }
 
     private fun publishAllParams() {
-        mqtt.publish("/car/speed", params.currentSpeed.toString())
-        mqtt.publish("/car/stop", if (params.stop) "1" else "0")
-        mqtt.publish("/car/enable-const-speed", if (params.enableConstantSpeed) "1" else "0")
+        mqtt.publish("car/throttle", params.currentSpeed.toString())
+        mqtt.publish("car/stop", if (params.stop) "1" else "0")
+        mqtt.publish("car/enable-const-speed", if (params.enableConstantSpeed) "1" else "0")
     }
 
     private fun loadParams() {

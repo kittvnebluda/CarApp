@@ -74,7 +74,7 @@ class PidPane : JPanel(GridBagLayout()) {
                 params.throttleKi = fieldMap[FieldTitle.I]!!.text.toFloat()
                 params.throttleKd = fieldMap[FieldTitle.D]!!.text.toFloat()
 
-                mqtt.publish("/car/throttle/pid", "${params.throttleKp} ${params.throttleKi} ${params.throttleKd}")
+                mqtt.publish("car/throttle/pid", "${params.throttleKp} ${params.throttleKi} ${params.throttleKd}")
                 publishButton.background = Color.GREEN
                 publishButton.foreground = Color.BLACK
 
@@ -89,7 +89,7 @@ class PidPane : JPanel(GridBagLayout()) {
     }
 
     private fun publishAllParams() {
-        mqtt.publish("/car/throttle/pid", "${params.throttleKp} ${params.throttleKi} ${params.throttleKd}")
+        mqtt.publish("car/throttle/pid", "${params.throttleKp} ${params.throttleKi} ${params.throttleKd}")
         publishButton.background = Color.GREEN
         publishButton.foreground = Color.BLACK
     }
