@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.8.0"
+    kotlin("plugin.serialization") version "1.8.10"
 }
 
 group = "com.nablude"
@@ -14,6 +15,7 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
     implementation("org.eclipse.paho:org.eclipse.paho.mqttv5.client:1.2.5")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
 }
 
 tasks.test {

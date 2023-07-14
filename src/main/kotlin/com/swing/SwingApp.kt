@@ -1,13 +1,14 @@
 package com.swing
 
-import java.awt.GridBagConstraints
-import java.awt.Insets
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import javax.swing.*
 
 val mqtt = Mqtt("tcp://localhost:1883", "car_control_panel")
-
-private val westInsets = Insets(5, 0, 5, 5)
-private val eastInsets = Insets(5, 5, 5, 0)
+val cfgDirPath: Path = Paths.get(System.getProperty("user.dir"), "config")
 
 fun main() {
     SwingUtilities.invokeLater { SwingApp }
@@ -15,32 +16,24 @@ fun main() {
 
 object SwingApp : JFrame() {
     init {
+        // create save directory if not exists
+        Files.createDirectories(cfgDirPath)
+
         title = "Car control interface"
-
         defaultCloseOperation = EXIT_ON_CLOSE
-
 //        preferredSize = Dimension(320, 240)
-
         contentPane = ContentPane()
-
-        isResizable = false
-
         pack() // установка размеров фрейма
-
+        isResizable = false
         isVisible = true
-    }
-}
 
-fun createGbc(x: Int, y: Int): GridBagConstraints {
-    val gbc = GridBagConstraints()
-    gbc.gridx = x
-    gbc.gridy = y
-    gbc.gridwidth = 1
-    gbc.gridheight = 1
-    gbc.anchor = if (x == 0) GridBagConstraints.WEST else GridBagConstraints.EAST
-    gbc.fill = if (x == 0) GridBagConstraints.BOTH else GridBagConstraints.HORIZONTAL
-    gbc.insets = if (x == 0) westInsets else eastInsets
-    gbc.weightx = if (x == 0) 0.1 else 1.0
-    gbc.weighty = 1.0
-    return gbc
+        addWindowListener(object : WindowAdapter() {
+            override fun windowClosing(e: WindowEvent?) {
+                (contentPane as ContentPane).imageSettingsPane.saveParams()
+                (contentPane as ContentPane).carMotionPane.saveParams()
+                (contentPane as ContentPane).pidPane.saveParams()
+                super.windowClosing(e)
+            }
+        })
+    }
 }
