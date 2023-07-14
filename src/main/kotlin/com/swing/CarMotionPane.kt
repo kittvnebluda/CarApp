@@ -95,7 +95,7 @@ class CarMotionPane : JPanel(GridBagLayout()) {
 
         speedSpinner.addChangeListener {
             params.currentSpeed = speedSpinner.value as Int
-            mqtt.publish("car/speed", params.currentSpeed.toString())
+            mqtt.publish("car/throttle", params.currentSpeed.toString())
         }
 
         constantSpeedBtn.addActionListener {
