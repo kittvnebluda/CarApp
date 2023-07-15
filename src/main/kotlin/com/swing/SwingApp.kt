@@ -7,7 +7,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import javax.swing.*
 
-val mqtt = Mqtt("tcp://localhost:1883", "car_control_panel")
+val mqtt = Mqtt("tcp://localhost:1883", "car-interface")
 val cfgDirPath: Path = Paths.get(System.getProperty("user.dir"), "config")
 
 fun main() {
