@@ -1,10 +1,11 @@
 package com.swing
 
-import org.eclipse.paho.mqttv5.client.MqttClient
-import org.eclipse.paho.mqttv5.client.MqttConnectionOptions
+import org.eclipse.paho.mqttv5.client.*
 import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence
 import org.eclipse.paho.mqttv5.common.MqttException
 import org.eclipse.paho.mqttv5.common.MqttMessage
+import org.eclipse.paho.mqttv5.common.packet.MqttProperties
+
 
 class Mqtt @JvmOverloads constructor(
     broker: String,
@@ -24,8 +25,33 @@ class Mqtt @JvmOverloads constructor(
         options.connectionTimeout = timeout
         options.keepAliveInterval = keepAlive
 
+        client.setCallback(object : MqttCallback {
+            override fun disconnected(disconnectResponse: MqttDisconnectResponse?) {
+                println("Disconnected: $disconnectResponse")
+            }
+
+            override fun mqttErrorOccurred(exception: MqttException?) {
+                if (exception != null) {
+                    println("MQTT error occurred: ${exception.message}")
+                }
+            }
+
+            override fun messageArrived(topic: String, message: MqttMessage) {
+                println("Message arrived: ${message.payload}, from $topic topic")
+            }
+
+            override fun deliveryComplete(token: IMqttToken?) {}
+
+            override fun connectComplete(reconnect: Boolean, serverURI: String?) {
+                println("Connected to $serverURI")
+            }
+
+            override fun authPacketArrived(reasonCode: Int, properties: MqttProperties?) {}
+        })
+
         // connect
         client.connect(options)
+//        client.subscribe("car-interface/publish/all", 2)
     }
 
     constructor(
@@ -37,8 +63,8 @@ class Mqtt @JvmOverloads constructor(
     fun publish(topic: String, message: String) {
         // create message and setup QoS
         val mqttMessage = MqttMessage(message.toByteArray())
-        val qos = 0
-        mqttMessage.qos = qos
+        mqttMessage.qos = 0
+        mqttMessage.isRetained = true
 
         // publish message
         client.publish(topic, mqttMessage)
