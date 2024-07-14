@@ -1,4 +1,4 @@
-package com.swing
+package com.swing.panes
 
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
@@ -6,10 +6,10 @@ import javax.swing.BorderFactory
 import javax.swing.JPanel
 
 
-class ContentPane : JPanel(GridBagLayout()) {
-    val pidPane = PidPane()
+class MainContentPane : JPanel(GridBagLayout()) {
+    val pidPane = PidPane("throttle")
     val imageSettingsPane = ImageSettingsPane()
-    val carMotionPane = CarMotionPane()
+    val motionPane = MotionPane()
     init {
         border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 
@@ -20,7 +20,7 @@ class ContentPane : JPanel(GridBagLayout()) {
         add(imageSettingsPane, c)
         c.gridx = 1
         c.gridy = 0
-        add(carMotionPane, c)
+        add(motionPane, c)
         c.gridx = 2
         c.gridy = 0
         add(pidPane, c)
