@@ -7,7 +7,8 @@ import javax.swing.JPanel
 
 
 class MainContentPane : JPanel(GridBagLayout()) {
-    val pidPane = PidPane("throttle")
+    val steeringPidPane = PidPane("steering")
+    val throttlePidPane = PidPane("throttle")
     val imageSettingsPane = ImageSettingsPane()
     val motionPane = MotionPane()
     init {
@@ -21,8 +22,13 @@ class MainContentPane : JPanel(GridBagLayout()) {
         c.gridx = 1
         c.gridy = 0
         add(motionPane, c)
-        c.gridx = 2
-        c.gridy = 0
-        add(pidPane, c)
+        c.gridx = 0
+        c.gridy = 1
+        c.fill = GridBagConstraints.BOTH
+        add(steeringPidPane, c)
+        c.gridx = 1
+        c.gridy = 1
+        c.fill = GridBagConstraints.BOTH
+        add(throttlePidPane, c)
     }
 }

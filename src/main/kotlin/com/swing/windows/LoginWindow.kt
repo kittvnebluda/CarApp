@@ -31,6 +31,7 @@ object LoginWindow : JFrame() {
     private val paramsManager = ParamsManager(configPath, defaultParams, LoginParams.serializer())
 
     init {
+        setIconImage()
         paramsManager.loadParams()
 
         title = "Start Window"
@@ -90,6 +91,15 @@ object LoginWindow : JFrame() {
                 "Illegal Argument Error",
                 JOptionPane.ERROR_MESSAGE)
             false
+        }
+    }
+    private fun setIconImage() {
+        val iconURL = this::class.java.getResource("/aqua.png")
+        if (iconURL != null) {
+            val icon = ImageIcon(iconURL)
+            iconImage = icon.image
+        } else {
+            println("Icon image not found.")
         }
     }
 }

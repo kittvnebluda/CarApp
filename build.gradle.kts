@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.nablude"
-version = "1.2.0-SNAPSHOT"
+version = "1.2.1-SNAPSHOT"
 
 var mainClass = "com.swing.SwingAppKt"
 
