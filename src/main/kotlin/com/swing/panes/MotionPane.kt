@@ -22,6 +22,7 @@ class MotionPane : JPanel(GridBagLayout()) {
                             var topicSpeed: String,
                             var topicStop: String,
                             var topicPublishSpeed: String)
+    
 
     enum class FieldTitle(val title: String) {
         PublishSpeed("Publish speed"),

@@ -11,6 +11,7 @@ class MainContentPane : JPanel(GridBagLayout()) {
     val throttlePidPane = PidPane("throttle")
     val imageSettingsPane = ImageSettingsPane()
     val motionPane = MotionPane()
+
     init {
         border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 

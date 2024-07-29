@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.nablude"
-version = "1.2.1-SNAPSHOT"
+version = "1.3.0-SNAPSHOT"
 
 var mainClass = "com.swing.SwingAppKt"
 
@@ -16,6 +16,7 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation("org.eclipse.paho:org.eclipse.paho.mqttv5.client:1.2.5")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+    implementation("org.json:json:20240303")
 }
 
 tasks.test {
