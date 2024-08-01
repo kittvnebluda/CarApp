@@ -3,22 +3,29 @@ package com.swing.panes
 import org.json.JSONArray
 import org.json.JSONObject
 import java.awt.*
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
-import java.awt.event.MouseMotionAdapter
+import java.awt.event.*
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 import javax.swing.*
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 class MapPane: JPanel() {
     private var selectedPointIndex: Int = -1
+    private val panelWidth = 600
+    private val panelHeight = 600
+    private var translation = Point(panelWidth / 2, panelHeight / 2)
+    private var rotation = -PI / 2
+    private var lastMousePosition: Point? = null
 
     val pointTableModel = PointTableModel()
 
     init {
         background = Color.WHITE
-        preferredSize = Dimension(600, 600)
+        preferredSize = Dimension(panelWidth, panelHeight)
+        bindKeyActions()
 
         addMouseListener(object : MouseAdapter() {
             override fun mousePressed(e: MouseEvent) {
@@ -26,13 +33,19 @@ class MapPane: JPanel() {
                 if (SwingUtilities.isRightMouseButton(e) && selectedPointIndex != -1) {
                     showEditMenu(e)
                 }
+                lastMousePosition = e.point
             }
         })
 
         addMouseMotionListener(object : MouseMotionAdapter() {
             override fun mouseDragged(e: MouseEvent) {
-                if (selectedPointIndex != -1) {
-                    pointTableModel.changePoint(selectedPointIndex, e.point)
+                if (SwingUtilities.isLeftMouseButton(e) && selectedPointIndex != -1) {
+                    pointTableModel.changePoint(selectedPointIndex, fromMapFrame(e.point))
+                    repaint()
+                } else if (SwingUtilities.isMiddleMouseButton(e)) {
+                    val deltaPos = e.point - lastMousePosition!!
+                    translation += deltaPos
+                    lastMousePosition = e.point
                     repaint()
                 }
             }
@@ -106,20 +119,30 @@ class MapPane: JPanel() {
     override fun paintComponent(g: Graphics) {
         super.paintComponent(g)
         val g2 = g as Graphics2D
+
+        g2.translate(translation.x, translation.y)
+        g2.rotate(rotation)
+
         for (point in pointTableModel.points) {
             g2.fillOval(point.x - 5, point.y - 5, 10, 10)
         }
     }
 
-
-    private fun findPointNear(location: Point): Point? {
-        val tolerance = 10
-        return pointTableModel.points.find { it.distance(location.x.toDouble(), location.y.toDouble()) < tolerance }
+    private fun fromMapFrame(point: Point): Point {
+        point.translate(-translation.x, -translation.y)
+        val cosTheta = cos(rotation)
+        val sinTheta = -sin(rotation)
+        val newX = point.x * cosTheta - point.y * sinTheta
+        val newY = point.x * sinTheta + point.y * cosTheta
+        return Point(newX.toInt(), newY.toInt())
     }
 
     private fun findPointIndexNear(location: Point): Int {
         val tolerance = 10
-        return pointTableModel.points.indexOfFirst { it.distance(location.x.toDouble(), location.y.toDouble()) < tolerance }
+        val locReal = fromMapFrame(location)
+        return pointTableModel.points.indexOfFirst {
+            it.distance(locReal.x.toDouble(), locReal.y.toDouble()) < tolerance
+        }
     }
 
     private fun showEditMenu(e: MouseEvent) {
@@ -142,4 +165,84 @@ class MapPane: JPanel() {
         menu.add(editItem)
         menu.show(this, e.x, e.y)
     }
+
+    private fun bindKeyActions() {
+        val inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+        val actionMap = actionMap
+
+        // Bind Q key
+        inputMap.put(KeyStroke.getKeyStroke('Q', 0), "rotateCounterClockwise")
+        actionMap.put("rotateCounterClockwise", object : AbstractAction() {
+            override fun actionPerformed(e: ActionEvent) {
+                rotation -= 0.01
+                repaint()
+            }
+        })
+
+        // Bind E key
+        inputMap.put(KeyStroke.getKeyStroke('E', 0), "rotateClockwise")
+        actionMap.put("rotateClockwise", object : AbstractAction() {
+            override fun actionPerformed(e: ActionEvent) {
+                rotation += 0.01
+                repaint()
+            }
+        })
+
+        // Bind W key
+        inputMap.put(KeyStroke.getKeyStroke('W', 0), "panUp")
+        actionMap.put("panUp", object : AbstractAction() {
+            override fun actionPerformed(e: ActionEvent) {
+                translation.y -= 1
+                repaint()
+            }
+        })
+
+        // Bind S key
+        inputMap.put(KeyStroke.getKeyStroke('S', 0), "panDown")
+        actionMap.put("panDown", object : AbstractAction() {
+            override fun actionPerformed(e: ActionEvent) {
+                translation.y += 1
+                repaint()
+            }
+        })
+
+        // Bind A key
+        inputMap.put(KeyStroke.getKeyStroke('A', 0), "panLeft")
+        actionMap.put("panLeft", object : AbstractAction() {
+            override fun actionPerformed(e: ActionEvent) {
+                translation.x -= 1
+                repaint()
+            }
+        })
+
+        // Bind D key
+        inputMap.put(KeyStroke.getKeyStroke('D', 0), "panRight")
+        actionMap.put("panRight", object : AbstractAction() {
+            override fun actionPerformed(e: ActionEvent) {
+                translation.x += 1
+                repaint()
+            }
+        })
+
+        // Add alternative bindings for lowercase
+        inputMap.put(KeyStroke.getKeyStroke('q', 0), "rotateCounterClockwise")
+        inputMap.put(KeyStroke.getKeyStroke('e', 0), "rotateClockwise")
+        inputMap.put(KeyStroke.getKeyStroke('w', 0), "panUp")
+        inputMap.put(KeyStroke.getKeyStroke('s', 0), "panDown")
+        inputMap.put(KeyStroke.getKeyStroke('a', 0), "panLeft")
+        inputMap.put(KeyStroke.getKeyStroke('d', 0), "panRight")
+    }
+}
+
+private operator fun Point.plusAssign(point: Point) {
+    x += point.x
+    y += point.y
+}
+
+private operator fun Point.minus(translation: Point): Point {
+    return Point(x - translation.x, y - translation.y)
+}
+
+private operator fun Int.times(point: Point): Point {
+    return Point(this * point.x, this * point.y)
 }
